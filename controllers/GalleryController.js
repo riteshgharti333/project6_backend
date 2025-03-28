@@ -1,6 +1,6 @@
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import { Gallery } from "../models/galleryModel.js";
-import ErrorHandler from "../utils/ErrorHandler.js";
+import ErrorHandler from "../utils/errorHandler.js";
 
 // CREATE GALLERY
 export const createGallery = catchAsyncError(async (req, res, next) => {
