@@ -1,7 +1,7 @@
 import cloudinary from "../utils/cloudinary.js";
 import { GalleryFolder } from "../models/galleryFolderModel.js";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
-import ErrorHandler from "../utils/ErrorHandler.js";
+import ErrorHandler from "../utils/errorHandler.js";
 import streamifier from "streamifier";
 import mongoose from "mongoose";
 
@@ -165,7 +165,6 @@ export const deleteGalleryFolder = catchAsyncError(async (req, res, next) => {
   }
 });
 
-
 /// UPDATE GALLERY FOLDER
 export const updateGalleryFolder = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
@@ -181,16 +180,16 @@ export const updateGalleryFolder = catchAsyncError(async (req, res, next) => {
   // FormData may send individual strings or an array
   if (req.body.imagesToRemove) {
     if (Array.isArray(req.body.imagesToRemove)) {
-      imagesToRemove = req.body.imagesToRemove;  // Array format
+      imagesToRemove = req.body.imagesToRemove; // Array format
     } else if (typeof req.body.imagesToRemove === "string") {
-      imagesToRemove = [req.body.imagesToRemove];  // Single image string converted to array
+      imagesToRemove = [req.body.imagesToRemove]; // Single image string converted to array
     }
   }
 
   // ✅ Remove images from Cloudinary
   if (imagesToRemove.length > 0) {
     const imageIdsToRemove = imagesToRemove.map((imgUrl) => {
-      const publicId = imgUrl.split("/").pop().split(".")[0];  // Extract public ID
+      const publicId = imgUrl.split("/").pop().split(".")[0]; // Extract public ID
       return `collage_project/gallery_folder/${folder.folderTitle}/images/${publicId}`;
     });
 
@@ -216,7 +215,11 @@ export const updateGalleryFolder = catchAsyncError(async (req, res, next) => {
           },
           (error, result) => {
             if (error) reject(error);
-            else resolve({ imageUrl: result.secure_url, publicId: result.public_id });
+            else
+              resolve({
+                imageUrl: result.secure_url,
+                publicId: result.public_id,
+              });
           }
         );
         streamifier.createReadStream(file.buffer).pipe(stream);
@@ -235,5 +238,3 @@ export const updateGalleryFolder = catchAsyncError(async (req, res, next) => {
     folder,
   });
 });
-
-

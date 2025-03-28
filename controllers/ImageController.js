@@ -1,6 +1,6 @@
 import cloudinary from "../utils/cloudinary.js";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
-import ErrorHandler from "../utils/ErrorHandler.js";
+import ErrorHandler from "../utils/errorHandler.js";
 
 export const uploadImage = catchAsyncError(async (req, res, next) => {
   if (!req.file) {

@@ -1,7 +1,7 @@
 import cloudinary from "../utils/cloudinary.js";
 import { Alumni } from "../models/alumniModel.js";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
-import ErrorHandler from "../utils/ErrorHandler.js";
+import ErrorHandler from "../utils/errorHandler.js";
 import streamifier from "streamifier";
 
 //  Create Alumni

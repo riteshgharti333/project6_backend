@@ -1,6 +1,6 @@
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import { Founder } from "../models/founderModel.js";
-import ErrorHandler from "../utils/ErrorHandler.js";
+import ErrorHandler from "../utils/errorHandler.js";
 import cloudinary from "../utils/cloudinary.js";
 import streamifier from "streamifier";
 import mongoose from "mongoose";

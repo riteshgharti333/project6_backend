@@ -1,7 +1,7 @@
 import cloudinary from "../utils/cloudinary.js";
 import { Staff } from "../models/staffModel.js";
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
-import ErrorHandler from "../utils/ErrorHandler.js";
+import ErrorHandler from "../utils/errorHandler.js";
 import streamifier from "streamifier";
 import mongoose from "mongoose";
 
