@@ -20,7 +20,7 @@ export const createStaff = catchAsyncError(async (req, res, next) => {
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: "collage_project/staff_images",
+          folder: "thenad_data/staff_images",
           transformation: [{ quality: "auto", fetch_format: "auto" }],
         },
         (error, result) => {
@@ -97,14 +97,14 @@ export const updateStaff = catchAsyncError(async (req, res, next) => {
       // 🔥 Destroy old image from Cloudinary
       const oldImagePublicId = staff.image.split("/").pop().split(".")[0];
       await cloudinary.uploader.destroy(
-        `collage_project/staff_images/${oldImagePublicId}`
+        `thenad_data/staff_images/${oldImagePublicId}`
       );
 
       // 🔥 Upload new image using streamifier
       const result = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           {
-            folder: "collage_project/staff_images",
+            folder: "thenad_data/staff_images",
             transformation: [{ quality: "auto", fetch_format: "auto" }],
           },
           (error, result) => {
@@ -158,7 +158,7 @@ export const deleteStaff = catchAsyncError(async (req, res, next) => {
     const publicId = imageUrl.split("/").pop().split(".")[0];
 
     await cloudinary.uploader.destroy(
-      `collage_project/staff_images/${publicId}`
+      `thenad_data/staff_images/${publicId}`
     );
   }
 

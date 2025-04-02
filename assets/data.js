@@ -2,10 +2,10 @@
 export const bannerData = {
   "home-banner": { title: "Home Banner" },
   "about-banner": { title: "About Banner" },
-  "founding-member-banner": { title: "Founding Member Banner" },
+  "mentor-banner": { title: "Mentor Banner" },
   "staff-banner": { title: "Staff Banner" },
   "enquiry-banner": { title: "Enquiry Banner" },
-  "placement-banner": { title: "Placement Banner" },
+  "alumni-banner": { title: "Alumni Banner" },
   "admission-banner": { title: "Admission Banner" },
   "gallery-banner": { title: "Gallery Banner" },
   "contact-banner": { title: "Contact Banner" },

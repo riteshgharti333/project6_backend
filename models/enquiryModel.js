@@ -14,7 +14,6 @@ const enquirySchema = new mongoose.Schema(
       required: [true, "Email is required"],
       trim: true,
       lowercase: true,
-      unique: true,
       match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
     },
     phoneNumber: {
@@ -44,6 +43,11 @@ const enquirySchema = new mongoose.Schema(
     city: {
       type: String,
       required: [true, "City is required"],
+      trim: true,
+    },
+    message: {
+      type: String,
+      required: [true, "Message is required"],
       trim: true,
     },
     approved: {

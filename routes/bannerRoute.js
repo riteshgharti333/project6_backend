@@ -5,18 +5,26 @@ import {
   createBanner,
   getAllBanners,
 } from "../controllers/BannerController.js";
-import upload from "../middlewares/multer.js";
 
 const router = express.Router();
 
-// Create a new banner
-router.post("/", upload.single("image"), createBanner);
+import imageHandler from "../middlewares/multer.js";
 
-// Get a banner by type and ID
+router.post(
+  "/",
+  imageHandler.upload.single("image"),
+  imageHandler.processImage,
+  createBanner
+);
+
 router.get("/:bannerType/:id", getBanner);
 
-// Update a banner by type and ID
-router.put("/:bannerType/:id", upload.single("image"), updateBanner);
+router.put(
+  "/:bannerType/:id",
+  imageHandler.upload.single("image"),
+  imageHandler.processImage,
+  updateBanner
+);
 
 router.get("/all-banners", getAllBanners);
 

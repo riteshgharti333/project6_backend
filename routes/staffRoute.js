@@ -7,13 +7,23 @@ import {
   deleteStaff,
 } from "../controllers/StaffController.js";
 
-import upload from "../middlewares/multer.js";
-
 const router = express.Router();
 
-router.post("/new-staff", upload.single("image"), createStaff);
+import imageHandler from "../middlewares/multer.js";
 
-router.put("/:id", upload.single("image"), updateStaff);
+router.post(
+  "/new-staff",
+  imageHandler.upload.single("image"),
+  imageHandler.processImage,
+  createStaff
+);
+
+router.put(
+  "/:id",
+  imageHandler.upload.single("image"),
+  imageHandler.processImage,
+  updateStaff
+);
 
 router.get("/all-staffs", getAllStaff);
 

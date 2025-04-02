@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 import {
   createAlumni,
   getAlumni,
@@ -9,15 +8,26 @@ import {
 } from "../controllers/AlumniController.js";
 
 const router = express.Router();
-import upload from "../middlewares/multer.js";
 
-router.post("/new-alumni", upload.single("image"), createAlumni);
+import imageHandler from "../middlewares/multer.js";
+
+router.post(
+  "/new-alumni",
+  imageHandler.upload.single("image"),
+  imageHandler.processImage,
+  createAlumni
+);
 
 router.get("/all-alumnies", getAlumni);
 
 router.get("/:id", getSingleAlumni);
 
-router.put("/:id", upload.single("image"), updateAlumni);
+router.put(
+  "/:id",
+  imageHandler.upload.single("image"),
+  imageHandler.processImage,
+  updateAlumni
+);
 
 router.delete("/:id", deleteAlumni);
 

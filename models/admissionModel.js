@@ -45,6 +45,11 @@ const admissionSchema = new mongoose.Schema(
       required: [true, "City is required"],
       trim: true,
     },
+    message: {
+      type: String,
+      required: [true, "Message is required"],
+      trim: true,
+    },
     approved: {
       type: Boolean,
       default: false,

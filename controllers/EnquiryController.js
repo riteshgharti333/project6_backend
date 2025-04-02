@@ -15,6 +15,7 @@ export const createEnquiry = catchAsyncError(async (req, res, next) => {
     selectState,
     district,
     city,
+    message,
   } = req.body;
 
   if (
@@ -25,7 +26,8 @@ export const createEnquiry = catchAsyncError(async (req, res, next) => {
     !selectCourse ||
     !selectState ||
     !district ||
-    !city
+    !city ||
+    !message
   ) {
     throw new ErrorHandler("All fields are required!", 400);
   }
@@ -39,6 +41,7 @@ export const createEnquiry = catchAsyncError(async (req, res, next) => {
     selectState,
     district,
     city,
+    message,
   });
 
   res.status(201).json({
@@ -101,7 +104,6 @@ export const deleteEnquiry = catchAsyncError(async (req, res, next) => {
   });
 });
 
-
 // ✅ Approve Enquiry & Add to Admission
 export const approveEnquiry = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
@@ -119,7 +121,6 @@ export const approveEnquiry = catchAsyncError(async (req, res, next) => {
     });
   }
 
-  // ✅ Add enquiry data to admission collection with `approved: false`
   const newAdmission = await Admission.create({
     name: enquiry.name,
     email: enquiry.email,
@@ -129,10 +130,10 @@ export const approveEnquiry = catchAsyncError(async (req, res, next) => {
     selectState: enquiry.selectState,
     district: enquiry.district,
     city: enquiry.city,
-    approved: false,    // ✅ Set approved to false when creating admission
+    message: enquiry.message,
+    approved: false,
   });
 
-  // ✅ Mark the enquiry as approved
   enquiry.approved = true;
   await enquiry.save();
 

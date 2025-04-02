@@ -4,7 +4,6 @@ import ErrorHandler from "../utils/errorHandler.js";
 
 import cloudinary from "../utils/cloudinary.js";
 import streamifier from "streamifier";
-import mongoose from "mongoose";
 
 //  CREATE BANNER
 export const createBanner = catchAsyncError(async (req, res, next) => {
@@ -26,7 +25,7 @@ export const createBanner = catchAsyncError(async (req, res, next) => {
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: `collage_project/banner/${type}`,
+          folder: `thenad_data/banner/${type}`,
           transformation: [{ quality: "auto", fetch_format: "auto" }],
         },
         (error, result) => {
@@ -94,7 +93,7 @@ export const updateBanner = catchAsyncError(async (req, res, next) => {
 
         // ✅ Delete from the correct folder path using bannerType
         await cloudinary.uploader.destroy(
-          `collage_project/banner/${bannerType}/${publicId}`
+          `thenad_data/banner/${bannerType}/${publicId}`
         );
       }
 
@@ -102,7 +101,7 @@ export const updateBanner = catchAsyncError(async (req, res, next) => {
       const result = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           {
-            folder: `collage_project/banner/${bannerType}`,
+            folder: `thenad_data/banner/${bannerType}`,
             transformation: [{ quality: "auto", fetch_format: "auto" }],
           },
           (error, result) => {

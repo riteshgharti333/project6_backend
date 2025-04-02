@@ -19,7 +19,7 @@ export const createAlumni = catchAsyncError(async (req, res, next) => {
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: "collage_project/alumni_images",
+          folder: "thenad_data/alumni_images",
           transformation: [{ quality: "auto", fetch_format: "auto" }],
         },
         (error, result) => {
@@ -91,14 +91,12 @@ export const updateAlumni = catchAsyncError(async (req, res, next) => {
 
   if (req.file) {
     const publicId = alumni.image.split("/").pop().split(".")[0];
-    await cloudinary.uploader.destroy(
-      `collage_project/alumni_images/${publicId}`
-    );
+    await cloudinary.uploader.destroy(`thenad_data/alumni_images/${publicId}`);
 
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: "collage_project/alumni_images",
+          folder: "thenad_data/alumni_images",
           transformation: [{ quality: "auto", fetch_format: "auto" }],
         },
         (error, result) => {
@@ -137,9 +135,7 @@ export const deleteAlumni = catchAsyncError(async (req, res, next) => {
 
   // Delete image from Cloudinary
   const publicId = alumni.image.split("/").pop().split(".")[0];
-  await cloudinary.uploader.destroy(
-    `collage_project/alumni_images/${publicId}`
-  );
+  await cloudinary.uploader.destroy(`thenad_data/alumni_images/${publicId}`);
 
   await Alumni.findByIdAndDelete(id);
 

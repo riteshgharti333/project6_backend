@@ -6,13 +6,24 @@ import {
   updateFounder,
   deleteFounder,
 } from "../controllers/FounderController.js";
-import upload from "../middlewares/multer.js";
 
 const router = express.Router();
 
-router.post("/new-founder", upload.single("image"), createFounder);
+import imageHandler from "../middlewares/multer.js";
 
-router.put("/:id", upload.single("image"), updateFounder);
+router.post(
+  "/new-founder",
+  imageHandler.upload.single("image"),
+  imageHandler.processImage,
+  createFounder
+);
+
+router.put(
+  "/:id",
+  imageHandler.upload.single("image"),
+  imageHandler.processImage,
+  updateFounder
+);
 
 router.get("/all-founders", getAllFounders);
 

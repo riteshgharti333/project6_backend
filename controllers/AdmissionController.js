@@ -15,6 +15,7 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     selectState,
     district,
     city,
+    message
   } = req.body;
 
   if (
@@ -25,7 +26,8 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     !selectCourse ||
     !selectState ||
     !district ||
-    !city
+    !city ||
+    !message
   ) {
     throw new ErrorHandler("All fields are required!", 400);
   }
@@ -39,6 +41,7 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     selectState,
     district,
     city,
+    message
   });
 
   res.status(201).json({

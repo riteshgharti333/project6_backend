@@ -35,7 +35,7 @@ export const createGalleryFolder = catchAsyncError(async (req, res, next) => {
     const folderResult = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: `collage_project/gallery_folder/${folderTitle}`,
+          folder: `thenad_data/gallery_folder/${folderTitle}`,
           transformation: [{ quality: "auto", fetch_format: "auto" }],
         },
         (error, result) => {
@@ -60,7 +60,7 @@ export const createGalleryFolder = catchAsyncError(async (req, res, next) => {
       return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           {
-            folder: `collage_project/gallery_folder/${folderTitle}/images`,
+            folder: `thenad_data/gallery_folder/${folderTitle}/images`,
             transformation: [{ quality: "auto", fetch_format: "auto" }],
           },
           (error, result) => {
@@ -143,7 +143,7 @@ export const deleteGalleryFolder = catchAsyncError(async (req, res, next) => {
   }
 
   // ✅ 2. Extract Cloudinary folder path
-  const folderPath = `collage_project/gallery_folder/${folder.folderTitle}`;
+  const folderPath = `thenad_data/gallery_folder/${folder.folderTitle}`;
 
   try {
     // ✅ 3. Delete all images in the folder
@@ -190,7 +190,7 @@ export const updateGalleryFolder = catchAsyncError(async (req, res, next) => {
   if (imagesToRemove.length > 0) {
     const imageIdsToRemove = imagesToRemove.map((imgUrl) => {
       const publicId = imgUrl.split("/").pop().split(".")[0]; // Extract public ID
-      return `collage_project/gallery_folder/${folder.folderTitle}/images/${publicId}`;
+      return `thenad_data/gallery_folder/${folder.folderTitle}/images/${publicId}`;
     });
 
     // Remove images from Cloudinary
@@ -210,7 +210,7 @@ export const updateGalleryFolder = catchAsyncError(async (req, res, next) => {
       return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           {
-            folder: `collage_project/gallery_folder/${folder.folderTitle}/images`,
+            folder: `thenad_data/gallery_folder/${folder.folderTitle}/images`,
             transformation: [{ quality: "auto", fetch_format: "auto" }],
           },
           (error, result) => {

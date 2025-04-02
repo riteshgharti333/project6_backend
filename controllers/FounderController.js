@@ -19,7 +19,7 @@ export const createFounder = catchAsyncError(async (req, res, next) => {
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
-          folder: "collage_project/founder_images",
+          folder: "thenad_data/founder_images",
           transformation: [{ quality: "auto", fetch_format: "auto" }],
         },
         (error, result) => {
@@ -92,14 +92,14 @@ export const updateFounder = catchAsyncError(async (req, res, next) => {
       // 🔥 Destroy old image from Cloudinary
       const oldImagePublicId = founder.image.split("/").pop().split(".")[0];
       await cloudinary.uploader.destroy(
-        `collage_project/founder_images/${oldImagePublicId}`
+        `thenad_data/founder_images/${oldImagePublicId}`
       );
 
       // 🔥 Upload new image using streamifier
       const result = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           {
-            folder: "collage_project/founder_images",
+            folder: "thenad_data/founder_images",
             transformation: [{ quality: "auto", fetch_format: "auto" }],
           },
           (error, result) => {
@@ -112,7 +112,6 @@ export const updateFounder = catchAsyncError(async (req, res, next) => {
       });
 
       imageUrl = result.secure_url;
-
     } catch (error) {
       console.error("Cloudinary Upload Error:", error);
       throw new ErrorHandler("Failed to upload image to Cloudinary", 500);
@@ -134,7 +133,6 @@ export const updateFounder = catchAsyncError(async (req, res, next) => {
 
 // DELETE FOUNDER
 export const deleteFounder = catchAsyncError(async (req, res, next) => {
-
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -152,9 +150,7 @@ export const deleteFounder = catchAsyncError(async (req, res, next) => {
   if (imageUrl) {
     const publicId = imageUrl.split("/").pop().split(".")[0];
 
-    await cloudinary.uploader.destroy(
-      `collage_project/founder_images/${publicId}`
-    );
+    await cloudinary.uploader.destroy(`thenad_data/founder_images/${publicId}`);
   }
 
   await founder.deleteOne();
