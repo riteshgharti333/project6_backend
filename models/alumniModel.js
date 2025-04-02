@@ -7,14 +7,24 @@ const alumniSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    image: {
+      type: String,
+      required: true,
+    },
+    designation: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     company: {
       type: String,
       required: true,
       trim: true,
     },
-    image: {
+    location: {
       type: String,
       required: true,
+      trim: true,
     },
   },
   { timestamps: true }

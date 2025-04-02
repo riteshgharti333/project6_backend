@@ -6,9 +6,9 @@ import streamifier from "streamifier";
 
 //  Create Alumni
 export const createAlumni = catchAsyncError(async (req, res, next) => {
-  const { name, company } = req.body;
+  const { name, company, designation, location } = req.body;
 
-  if (!name || !company || !req.file) {
+  if (!name || !company || !designation || !location || !req.file) {
     throw new ErrorHandler("All fields are required!", 400);
   }
 
@@ -40,6 +40,8 @@ export const createAlumni = catchAsyncError(async (req, res, next) => {
   const alumni = await Alumni.create({
     name,
     company,
+    designation,
+    location,
     image: imageUrl,
   });
 
@@ -80,7 +82,7 @@ export const getSingleAlumni = catchAsyncError(async (req, res, next) => {
 // Update Alumni
 export const updateAlumni = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
-  const { name, company } = req.body;
+  const { name, company, designation, location } = req.body;
 
   const alumni = await Alumni.findById(id);
   if (!alumni) {
@@ -113,6 +115,8 @@ export const updateAlumni = catchAsyncError(async (req, res, next) => {
 
   alumni.name = name || alumni.name;
   alumni.company = company || alumni.company;
+  alumni.designation = designation || alumni.designation;
+  alumni.location = location || alumni.location;
   alumni.image = imageUrl;
 
   await alumni.save();
