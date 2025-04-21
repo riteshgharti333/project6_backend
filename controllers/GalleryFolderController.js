@@ -17,7 +17,7 @@ export const createGalleryFolder = catchAsyncError(async (req, res, next) => {
   ) {
     throw new ErrorHandler(
       "Folder title, folder image, and gallery images are required!",
-      400
+      400,
     );
   }
 
@@ -41,7 +41,7 @@ export const createGalleryFolder = catchAsyncError(async (req, res, next) => {
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
-        }
+        },
       );
       streamifier
         .createReadStream(req.files.folderImage[0].buffer)
@@ -70,7 +70,7 @@ export const createGalleryFolder = catchAsyncError(async (req, res, next) => {
                 imageUrl: result.secure_url,
                 publicId: result.public_id,
               });
-          }
+          },
         );
         streamifier.createReadStream(file.buffer).pipe(stream);
       });
@@ -128,7 +128,7 @@ export const getSingleGalleryFolder = catchAsyncError(
       message: "Gallery folder fetched successfully",
       folder,
     });
-  }
+  },
 );
 
 // DELETE Gallery Folder and Images from Cloudinary
@@ -195,12 +195,12 @@ export const updateGalleryFolder = catchAsyncError(async (req, res, next) => {
 
     // Remove images from Cloudinary
     await Promise.all(
-      imageIdsToRemove.map((publicId) => cloudinary.uploader.destroy(publicId))
+      imageIdsToRemove.map((publicId) => cloudinary.uploader.destroy(publicId)),
     );
 
     // Remove from MongoDB
     folder.galleryImages = folder.galleryImages.filter(
-      (img) => !imagesToRemove.includes(img.imageUrl)
+      (img) => !imagesToRemove.includes(img.imageUrl),
     );
   }
 
@@ -220,7 +220,7 @@ export const updateGalleryFolder = catchAsyncError(async (req, res, next) => {
                 imageUrl: result.secure_url,
                 publicId: result.public_id,
               });
-          }
+          },
         );
         streamifier.createReadStream(file.buffer).pipe(stream);
       });

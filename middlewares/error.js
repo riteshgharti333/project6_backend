@@ -14,18 +14,17 @@ export const errorMiddleware = (err, req, res, next) => {
     message = "Invalid ID format!";
   }
 
-    // ✅ Handle specific network-related errors
-    if (err.code === "ECONNREFUSED") {
-      message = "Server is unreachable. Please try again later.";
-      statusCode = 503;  // Service Unavailable
-    }
-  
-    if (err.code === "ETIMEDOUT") {
-      message = "Request timed out. Please try again.";
-      statusCode = 504;  // Gateway Timeout
-    }
+  // ✅ Handle specific network-related errors
+  if (err.code === "ECONNREFUSED") {
+    message = "Server is unreachable. Please try again later.";
+    statusCode = 503; // Service Unavailable
+  }
 
-    
+  if (err.code === "ETIMEDOUT") {
+    message = "Request timed out. Please try again.";
+    statusCode = 504; // Gateway Timeout
+  }
+
   // ⚠️ Handle Mongoose Validation Errors
   if (err.name === "ValidationError") {
     statusCode = 400;

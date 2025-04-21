@@ -33,7 +33,7 @@ export const getAllGallery = catchAsyncError(async (req, res, next) => {
       parentId: item._id,
       imageId: img._id,
       img: img.img,
-    }))
+    })),
   );
 
   res.status(200).json({
@@ -55,7 +55,7 @@ export const deleteImage = catchAsyncError(async (req, res, next) => {
 
   // Filter out the image to delete
   const updatedImages = gallery.images.filter(
-    (img) => img._id.toString() !== imageId
+    (img) => img._id.toString() !== imageId,
   );
 
   if (gallery.images.length === updatedImages.length) {

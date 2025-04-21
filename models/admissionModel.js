@@ -57,7 +57,7 @@ const admissionSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const Admission = mongoose.model("Admission", admissionSchema);

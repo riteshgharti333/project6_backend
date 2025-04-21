@@ -37,7 +37,7 @@ export const createStudent = catchAsyncError(async (req, res, next) => {
     if (error.code === 11000) {
       throw new ErrorHandler(
         `Student with enrollment ID "${enrollmentId}" already exists!`,
-        409
+        409,
       );
     }
 
@@ -80,7 +80,7 @@ export const updateStudent = catchAsyncError(async (req, res, next) => {
   const updatedStudent = await Student.findByIdAndUpdate(
     req.params.id,
     req.body,
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   );
 
   res.status(200).json({

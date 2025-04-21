@@ -22,14 +22,8 @@ router.post("/login", login);
 
 router.post("/logout", logout);
 
-router.put("/change-password", isAuthenticated, changePassword);
+router.put("/update-password", isAuthenticated, changePassword);
 
 router.get("/profile", isAuthenticated, profile);
-
-// router.put("approve/:id", approveContact);
-
-// router.post("/forgot-password", forgotPassword);
-
-// router.post("/reset-password/:id/:sessionToken", resetPassword);
 
 export default router;

@@ -31,7 +31,7 @@ export const createBanner = catchAsyncError(async (req, res, next) => {
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
-        }
+        },
       );
 
       streamifier.createReadStream(req.file.buffer).pipe(stream);
@@ -93,7 +93,7 @@ export const updateBanner = catchAsyncError(async (req, res, next) => {
 
         // ✅ Delete from the correct folder path using bannerType
         await cloudinary.uploader.destroy(
-          `thenad_data/banner/${bannerType}/${publicId}`
+          `thenad_data/banner/${bannerType}/${publicId}`,
         );
       }
 
@@ -107,7 +107,7 @@ export const updateBanner = catchAsyncError(async (req, res, next) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
 
         streamifier.createReadStream(req.file.buffer).pipe(stream);

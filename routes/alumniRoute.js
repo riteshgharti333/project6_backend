@@ -15,7 +15,7 @@ router.post(
   "/new-alumni",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  createAlumni
+  createAlumni,
 );
 
 router.get("/all-alumnies", getAlumni);
@@ -26,7 +26,7 @@ router.put(
   "/:id",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  updateAlumni
+  updateAlumni,
 );
 
 router.delete("/:id", deleteAlumni);

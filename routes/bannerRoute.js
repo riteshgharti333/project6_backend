@@ -14,7 +14,7 @@ router.post(
   "/",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  createBanner
+  createBanner,
 );
 
 router.get("/:bannerType/:id", getBanner);
@@ -23,7 +23,7 @@ router.put(
   "/:bannerType/:id",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  updateBanner
+  updateBanner,
 );
 
 router.get("/all-banners", getAllBanners);

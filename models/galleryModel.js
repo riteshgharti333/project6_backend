@@ -14,7 +14,7 @@ const gallerySchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Gallery = mongoose.model("Gallery", gallerySchema);

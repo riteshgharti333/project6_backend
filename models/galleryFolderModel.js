@@ -10,7 +10,7 @@ const gallerySchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique:true,
+      unique: true,
     },
     galleryImages: [
       {
@@ -19,7 +19,7 @@ const gallerySchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const GalleryFolder = mongoose.model("GalleryFolder", gallerySchema);

@@ -9,7 +9,7 @@ router.post(
   "/",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  uploadImage
+  uploadImage,
 );
 
 export default router;

@@ -25,7 +25,7 @@ export const createFounder = catchAsyncError(async (req, res, next) => {
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
-        }
+        },
       );
 
       streamifier.createReadStream(req.file.buffer).pipe(stream);
@@ -92,7 +92,7 @@ export const updateFounder = catchAsyncError(async (req, res, next) => {
       // 🔥 Destroy old image from Cloudinary
       const oldImagePublicId = founder.image.split("/").pop().split(".")[0];
       await cloudinary.uploader.destroy(
-        `thenad_data/founder_images/${oldImagePublicId}`
+        `thenad_data/founder_images/${oldImagePublicId}`,
       );
 
       // 🔥 Upload new image using streamifier
@@ -105,7 +105,7 @@ export const updateFounder = catchAsyncError(async (req, res, next) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
 
         streamifier.createReadStream(req.file.buffer).pipe(stream);

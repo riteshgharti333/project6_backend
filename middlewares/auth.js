@@ -1,9 +1,7 @@
-
 import jwt from "jsonwebtoken";
 import { Auth } from "../models/authModel.js";
 
 export const isAuthenticated = async (req, res, next) => {
-
   const { sessionToken } = req.cookies;
 
   if (!sessionToken) {

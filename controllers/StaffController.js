@@ -7,7 +7,6 @@ import mongoose from "mongoose";
 
 // NEW STAFF
 export const createStaff = catchAsyncError(async (req, res, next) => {
-  
   const { name, position, location } = req.body;
 
   if (!name || !position || !location || !req.file) {
@@ -26,7 +25,7 @@ export const createStaff = catchAsyncError(async (req, res, next) => {
         (error, result) => {
           if (error) reject(error);
           else resolve(result);
-        }
+        },
       );
 
       streamifier.createReadStream(req.file.buffer).pipe(stream);
@@ -97,7 +96,7 @@ export const updateStaff = catchAsyncError(async (req, res, next) => {
       // 🔥 Destroy old image from Cloudinary
       const oldImagePublicId = staff.image.split("/").pop().split(".")[0];
       await cloudinary.uploader.destroy(
-        `thenad_data/staff_images/${oldImagePublicId}`
+        `thenad_data/staff_images/${oldImagePublicId}`,
       );
 
       // 🔥 Upload new image using streamifier
@@ -110,7 +109,7 @@ export const updateStaff = catchAsyncError(async (req, res, next) => {
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
-          }
+          },
         );
 
         streamifier.createReadStream(req.file.buffer).pipe(stream);
@@ -157,9 +156,7 @@ export const deleteStaff = catchAsyncError(async (req, res, next) => {
   if (imageUrl) {
     const publicId = imageUrl.split("/").pop().split(".")[0];
 
-    await cloudinary.uploader.destroy(
-      `thenad_data/staff_images/${publicId}`
-    );
+    await cloudinary.uploader.destroy(`thenad_data/staff_images/${publicId}`);
   }
 
   await staff.deleteOne();

@@ -23,6 +23,8 @@ import certificateRouter from "./routes/certificateRoute.js";
 
 import galleryFolderRouter from "./routes/galleryFolderRoute.js";
 import alumniRouter from "./routes/alumniRoute.js";
+import courseRouter from "./routes/courseRoute.js";
+
 
 // Initialize Express app
 export const app = express();
@@ -56,7 +58,7 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-  })
+  }),
 );
 
 app.use(cookieParser());
@@ -64,20 +66,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api/auth", authRouter);
-app.use("/api/admission", admissionRouter);
-app.use("/api/enquiry", enquiryRouter);
-app.use("/api/contact", contactRouter);
-app.use("/api/gallery", galleryRouter);
-app.use("/api/banner", bannerRouter);
-app.use("/api/staff", staffRouter);
-app.use("/api/founder", founderRouter);
-app.use("/api/upload", imageRouter);
+app.use("/backend/api/auth", authRouter);
+app.use("/backend/api/admission", admissionRouter);
+app.use("/backend/api/enquiry", enquiryRouter);
+app.use("/backend/api/contact", contactRouter);
+app.use("/backend/api/gallery", galleryRouter);
+app.use("/backend/api/banner", bannerRouter);
+app.use("/backend/api/staff", staffRouter);
+app.use("/backend/api/founder", founderRouter);
+app.use("/backend/api/upload", imageRouter);
 
-app.use("/api/student", studentRouter);
-app.use("/api/certificate", certificateRouter);
-app.use("/api/gallery-folder", galleryFolderRouter);
-app.use("/api/alumni", alumniRouter);
+app.use("/backend/api/student", studentRouter);
+app.use("/backend/api/certificate", certificateRouter);
+app.use("/backend/api/gallery-folder", galleryFolderRouter);
+app.use("/backend/api/alumni", alumniRouter);
+app.use("/backend/api/course", courseRouter);
+
 
 app.get("/", (req, res) => {
   res.send("Welcome to Backend");

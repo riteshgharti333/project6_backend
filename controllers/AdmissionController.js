@@ -15,7 +15,7 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     selectState,
     district,
     city,
-    message
+    message,
   } = req.body;
 
   if (
@@ -41,7 +41,7 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     selectState,
     district,
     city,
-    message
+    message,
   });
 
   res.status(201).json({

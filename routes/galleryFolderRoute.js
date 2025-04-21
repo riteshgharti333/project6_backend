@@ -1,8 +1,6 @@
 import express from "express";
 import multer from "multer";
 import sharp from "sharp";
-import path from "path";
-import fs from "fs-extra";
 import {
   createGalleryFolder,
   deleteGalleryFolder,
@@ -11,53 +9,46 @@ import {
   updateGalleryFolder,
 } from "../controllers/GalleryFolderController.js";
 
-// ✅ Ensure 'uploads' folder exists
-const uploadDir = "uploads/gallery";
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// ✅ Multer Configuration
+// ✅ Multer memory storage
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// ✅ Multer handles both fields
 const galleryUpload = upload.fields([
   { name: "folderImage", maxCount: 1 },
-  { name: "galleryImages" }
+  { name: "galleryImages" },
 ]);
 
-// ✅ Image Compression Middleware
+// ✅ Middleware to compress all images in memory (no saving to disk)
 const processImages = async (req, res, next) => {
   if (!req.files) return next();
 
   try {
-    const compressImage = async (file) => {
-      const outputPath = path.join(uploadDir, `${Date.now()}-compressed.webp`);
-
-      await sharp(file.buffer)
-        .toFormat("webp")                   // ✅ Convert to WebP
-        .webp({ quality: 70 })              // ✅ Compress with 70% quality
-        .toFile(outputPath);
-
-      return outputPath;
+    const compressToWebp = async (fileBuffer) => {
+      return await sharp(fileBuffer)
+        .toFormat("webp")
+        .webp({ quality: 70 })
+        .toBuffer(); // returns compressed buffer
     };
 
-    // ✅ Compress folderImage
+    // ✅ folderImage (single)
     if (req.files.folderImage) {
-      const folderImage = req.files.folderImage[0];
-      const compressedFolderImage = await compressImage(folderImage);
-      req.files.folderImage[0].path = compressedFolderImage;
+      const original = req.files.folderImage[0];
+      const compressed = await compressToWebp(original.buffer);
+
+      req.files.folderImage[0].buffer = compressed;
+      req.files.folderImage[0].mimetype = "image/webp";
     }
 
-    // ✅ Compress galleryImages
+    // ✅ galleryImages (multiple)
     if (req.files.galleryImages) {
-      const compressedGalleryImages = await Promise.all(
-        req.files.galleryImages.map((img) => compressImage(img))
+      await Promise.all(
+        req.files.galleryImages.map(async (img) => {
+          const compressed = await compressToWebp(img.buffer);
+          img.buffer = compressed;
+          img.mimetype = "image/webp";
+        }),
       );
-
-      req.files.galleryImages.forEach((img, index) => {
-        img.path = compressedGalleryImages[index];
-      });
     }
 
     next();
@@ -73,15 +64,10 @@ router.post(
   "/new-gallery-folder",
   galleryUpload,
   processImages,
-  createGalleryFolder
+  createGalleryFolder,
 );
 
-router.put(
-  "/:id",
-  galleryUpload,
-  processImages,
-  updateGalleryFolder
-);
+router.put("/:id", galleryUpload, processImages, updateGalleryFolder);
 
 router.get("/all-gallery-folders", getAllGalleryFolders);
 router.get("/:id", getSingleGalleryFolder);

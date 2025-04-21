@@ -1,6 +1,12 @@
 import express from "express";
 
-import { approveContact, createContact, deleteContact, getAllContacts, getContact } from "../controllers/ContactController.js";
+import {
+  approveContact,
+  createContact,
+  deleteContact,
+  getAllContacts,
+  getContact,
+} from "../controllers/ContactController.js";
 
 const router = express.Router();
 

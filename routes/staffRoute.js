@@ -15,14 +15,14 @@ router.post(
   "/new-staff",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  createStaff
+  createStaff,
 );
 
 router.put(
   "/:id",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  updateStaff
+  updateStaff,
 );
 
 router.get("/all-staffs", getAllStaff);

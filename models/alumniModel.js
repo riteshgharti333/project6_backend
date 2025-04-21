@@ -27,7 +27,7 @@ const alumniSchema = new mongoose.Schema(
       trim: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Alumni = mongoose.model("Alumni", alumniSchema);

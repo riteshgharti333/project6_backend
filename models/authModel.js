@@ -21,19 +21,16 @@ const authSchema = new mongoose.Schema(
       type: String,
       select: false,
       required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters"],
+      minlength: [8, "Password must be at least 8 characters long"],
       validate: {
         validator: function (v) {
-          return /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(
-            v
-          );
+          return v.length >= 8;
         },
-        message:
-          "Password must contain at least one uppercase letter, one number, and one special character",
+        message: "Password must be at least 8 characters long",
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // 🔹 Hash password before saving to the database
@@ -48,24 +45,16 @@ authSchema.pre("save", async function (next) {
   next();
 });
 
+// 🔁 Update password method (length-only validation)
 authSchema.methods.updatePassword = async function (newPassword) {
-  // ✅ Validate new password format BEFORE hashing
-  const passwordRegex =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-  if (!passwordRegex.test(newPassword)) {
-    throw new Error(
-      "New Password must contain at least one uppercase letter, one number, and one special character."
-    );
+  if (newPassword.length < 8) {
+    throw new Error("New Password must be at least 8 characters long.");
   }
 
-  // ✅ Hash the new password before saving
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-  // ✅ Directly update password field and use `validateBeforeSave: true`
-  this.password = hashedPassword;
+  this.password = await bcrypt.hash(newPassword, 10);
 
   try {
-    await this.save({ validateBeforeSave: true }); // 🔹 Ensure full validation
+    await this.save({ validateBeforeSave: true });
   } catch (error) {
     throw new Error(`Validation failed: ${error.message}`);
   }

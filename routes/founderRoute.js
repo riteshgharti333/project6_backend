@@ -15,14 +15,14 @@ router.post(
   "/new-founder",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  createFounder
+  createFounder,
 );
 
 router.put(
   "/:id",
   imageHandler.upload.single("image"),
   imageHandler.processImage,
-  updateFounder
+  updateFounder,
 );
 
 router.get("/all-founders", getAllFounders);

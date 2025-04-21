@@ -9,7 +9,7 @@ const studentSchema = new mongoose.Schema(
     duration: { type: String, required: true },
     date: { type: String, required: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Student = mongoose.model("Student", studentSchema);

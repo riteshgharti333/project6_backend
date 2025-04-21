@@ -22,7 +22,7 @@ const staffSchema = new mongoose.Schema(
       trim: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Staff = mongoose.model("Staff", staffSchema);

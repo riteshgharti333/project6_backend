@@ -17,7 +17,7 @@ const founderSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Founder = mongoose.model("Founder", founderSchema);

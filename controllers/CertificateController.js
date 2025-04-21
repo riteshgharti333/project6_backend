@@ -1,29 +1,24 @@
-import { generateCertificate } from "../utils/generateCertificate.js"; 
-import path from "path";
+// /controllers/certificateController.js
 import fs from "fs";
+import path from "path";
+import { catchAsyncError } from "../middlewares/catchAsyncError.js";
+import ErrorHandler from "../utils/errorHandler.js";
+import { generateCertificate } from "../utils/generateCertificate.js";
+import Student from "../models/studentModel.js";
 
-// ✅ Generate Certificate by Enrollment ID
-export const getCertificate = async (req, res) => {
+
+export const getCertificate = catchAsyncError(async (req, res, next) => {
   const { enrollmentId } = req.params;
-
-  try {
-    // ✅ Generate the certificate
-    const certificatePath = await generateCertificate(enrollmentId);
-
-    // ✅ Serve the certificate image
-    if (fs.existsSync(certificatePath)) {
-      res.sendFile(path.resolve(certificatePath));
-    } else {
-      res.status(404).json({
-        result: 0,
-        message: "Certificate not found",
-      });
-    }
-  } catch (error) {
-    console.error("Error in certificate generation:", error);
-    res.status(500).json({
-      result: 0,
-      message: "Failed to generate certificate",
-    });
+  const student = await Student.findOne({ enrollmentId });
+  if (!student) {
+    return next(new ErrorHandler("❌ Invalid enrollment ID. No record found.", 404));
   }
-};
+
+  const certificatePath = await generateCertificate(enrollmentId);
+
+  if (!fs.existsSync(certificatePath)) {
+    return next(new ErrorHandler("❌ Certificate file not found after generation.", 404));
+  }
+
+  return res.sendFile(path.resolve(certificatePath));
+});
