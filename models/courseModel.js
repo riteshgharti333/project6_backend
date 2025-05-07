@@ -16,32 +16,68 @@ const courseSchema = new mongoose.Schema(
     },
     courseTitle: {
       type: String,
-      required: true,
     },
     courseDescription: {
       type: String,
-      required: true,
     },
+
+    courseOfCoursesTitle: {
+      type: String,
+    },
+    courseOfCoursesLists: [
+      {
+        item: {
+          type: String,
+        },
+      },
+    ],
+
+    topicTitle: {
+      type: String,
+    },
+    topicLists: [
+      {
+        item: {
+          type: String,
+        },
+      },
+    ],
+
+    careerTitle: {
+      type: String,
+    },
+    careerLists: [
+      {
+        item: {
+          type: String,
+        },
+      },
+    ],
+
     courseListTitle: {
       type: String,
-      required: true,
     },
     courseListDesc: {
       type: String,
-      required: true,
     },
     courseLists: [
       {
         title: {
           type: String,
-          required: true,
         },
         desc: {
           type: String,
-          required: true,
         },
       },
     ],
+
+    overviewTitle: {
+      type: String,
+    },
+
+    overviewDesc: {
+      type: String,
+    },
   },
   {
     timestamps: true,

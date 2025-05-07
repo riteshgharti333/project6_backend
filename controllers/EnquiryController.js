@@ -46,7 +46,7 @@ export const createEnquiry = catchAsyncError(async (req, res, next) => {
 
   res.status(201).json({
     result: 1,
-    message: "Enquiry form created successfully",
+    message: "Enquiry created successfully",
     enquiry,
   });
 });
@@ -56,12 +56,12 @@ export const getAllEnquiries = catchAsyncError(async (req, res, next) => {
   const enquiry = await Enquiry.find();
 
   if (!enquiry || enquiry.length === 0) {
-    return next(new ErrorHandler("No enquiry form found", 404));
+    return next(new ErrorHandler("No enquiry found", 404));
   }
 
   res.status(200).json({
     result: 1,
-    message: "Enquiry form fetched successfully",
+    message: "Enquiry fetched successfully",
     count: enquiry.length,
     enquiry,
   });
@@ -75,12 +75,12 @@ export const getEnquiryById = catchAsyncError(async (req, res, next) => {
   const enquiry = await Enquiry.findById(id);
 
   if (!enquiry) {
-    return next(new ErrorHandler("Enquiry form not found", 404));
+    return next(new ErrorHandler("Enquiry not found", 404));
   }
 
   res.status(200).json({
     result: 1,
-    message: "Enquiry form fetched successfully",
+    message: "Enquiry fetched successfully",
     enquiry,
   });
 });
@@ -93,14 +93,14 @@ export const deleteEnquiry = catchAsyncError(async (req, res, next) => {
   const enquiry = await Enquiry.findById(id);
 
   if (!enquiry) {
-    return next(new ErrorHandler("Enquiry form not found", 404));
+    return next(new ErrorHandler("Enquiry not found", 404));
   }
 
   await enquiry.deleteOne();
 
   res.status(200).json({
     result: 1,
-    message: "Enquiry form deleted successfully",
+    message: "Enquiry deleted successfully",
   });
 });
 

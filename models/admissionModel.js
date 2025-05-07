@@ -21,6 +21,15 @@ const admissionSchema = new mongoose.Schema(
       required: [true, "Phone number is required"],
       match: [/^\d{10}$/, "Phone number must be 10 digits"],
     },
+    photo: {
+      type: String,
+      required: false,
+    },
+    document: {
+      type: [String],
+      required: false,
+    },
+
     profile: {
       type: String,
       required: false,
@@ -47,7 +56,6 @@ const admissionSchema = new mongoose.Schema(
     },
     message: {
       type: String,
-      required: [true, "Message is required"],
       trim: true,
     },
     approved: {
@@ -57,7 +65,7 @@ const admissionSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export const Admission = mongoose.model("Admission", admissionSchema);

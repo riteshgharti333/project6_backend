@@ -21,7 +21,7 @@ export const createContact = catchAsyncError(async (req, res, next) => {
 
   res.status(201).json({
     result: 1,
-    message: "Contact form created successfully",
+    message: "Contact created successfully",
     contact,
   });
 });
@@ -31,12 +31,12 @@ export const getAllContacts = catchAsyncError(async (req, res, next) => {
   const contacts = await Contact.find().sort({ createdAt: -1 });
 
   if (!contacts || contacts.length === 0) {
-    throw new ErrorHandler("No contacts form  found", 404);
+    throw new ErrorHandler("No contacts  found", 404);
   }
 
   res.status(200).json({
     result: 1,
-    message: "Contacts form  fetched successfully",
+    message: "Contacts fetched successfully",
     count: contacts.length,
     contacts,
   });
@@ -49,12 +49,12 @@ export const getContact = catchAsyncError(async (req, res, next) => {
   const contact = await Contact.findById(id);
 
   if (!contact) {
-    throw new ErrorHandler("Contact form  not found", 404);
+    throw new ErrorHandler("Contact not found", 404);
   }
 
   res.status(200).json({
     result: 1,
-    message: "Contact form fetched successfully",
+    message: "Contact fetched successfully",
     contact,
   });
 });
@@ -66,12 +66,12 @@ export const deleteContact = catchAsyncError(async (req, res, next) => {
   const contact = await Contact.findByIdAndDelete(id);
 
   if (!contact) {
-    throw new ErrorHandler("Contact form not found", 404);
+    throw new ErrorHandler("Contact not found", 404);
   }
 
   res.status(200).json({
     result: 1,
-    message: "Contact form deleted successfully",
+    message: "Contact deleted successfully",
   });
 });
 
@@ -83,7 +83,7 @@ export const approveContact = catchAsyncError(async (req, res, next) => {
   const contact = await Contact.findById(id);
 
   if (!contact) {
-    throw new ErrorHandler("Contact form not found", 404);
+    throw new ErrorHandler("Contact not found", 404);
   }
 
   if (contact.approved) {

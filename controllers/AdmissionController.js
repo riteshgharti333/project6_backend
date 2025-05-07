@@ -2,6 +2,9 @@ import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import { Admission } from "../models/admissionModel.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import nodemailer from "nodemailer";
+import streamifier from "streamifier";
+import mongoose from "mongoose";
+import cloudinary from "../utils/cloudinary.js";
 
 // NEW ADMISSION
 
@@ -18,6 +21,7 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     message,
   } = req.body;
 
+  // Check required fields
   if (
     !name ||
     !email ||
@@ -26,12 +30,69 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     !selectCourse ||
     !selectState ||
     !district ||
-    !city ||
-    !message
+    !city
   ) {
-    throw new ErrorHandler("All fields are required!", 400);
+    return next(new ErrorHandler("All fields are required!", 400));
   }
 
+  let imageUrl;
+  try {
+    // Upload profile photo (passport photo)
+    const profilePhoto = req.files.photo[0];
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "thenad_data/admissions/profile_photos",
+          transformation: [
+            { width: 300, height: 300, crop: "fill", quality: "auto" },
+          ],
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+
+      streamifier.createReadStream(profilePhoto.buffer).pipe(stream);
+    });
+
+    imageUrl = result.secure_url;
+  } catch (error) {
+    console.error("Profile photo upload error:", error);
+    return next(new ErrorHandler("Failed to upload profile photo", 500));
+  }
+
+  let documentUrls = [];
+  if (req.files.document && req.files.document.length > 0) {
+    try {
+      // Process all documents in parallel
+      const uploadPromises = req.files.document.map((file) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "thenad_data/admissions/documents",
+              resource_type: "auto",
+              type: "upload",
+              access_mode: "public",
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            }
+          );
+
+          streamifier.createReadStream(file.buffer).pipe(stream);
+        });
+      });
+
+      documentUrls = await Promise.all(uploadPromises);
+    } catch (error) {
+      console.error("Document upload error:", error);
+      return next(new ErrorHandler("Failed to upload some documents", 500));
+    }
+  }
+
+  // Create admission record
   const admission = await Admission.create({
     name,
     email,
@@ -41,12 +102,15 @@ export const createAdmission = catchAsyncError(async (req, res, next) => {
     selectState,
     district,
     city,
-    message,
+    message: message || "",
+    photo: imageUrl,
+    document: documentUrls,
+    status: "pending",
   });
 
   res.status(201).json({
-    result: 1,
-    message: "Admission form created successfully",
+    success: true,
+    message: "Admission submitted successfully",
     admission,
   });
 });
@@ -61,7 +125,7 @@ export const getAllAdmissions = catchAsyncError(async (req, res, next) => {
 
   res.status(200).json({
     result: 1,
-    message: "Admissions form fetched successfully",
+    message: "Admissions fetched successfully",
     count: admissions.length,
     admissions,
   });
@@ -75,12 +139,12 @@ export const getAdmissionById = catchAsyncError(async (req, res, next) => {
   const admission = await Admission.findById(id);
 
   if (!admission) {
-    return next(new ErrorHandler("Admission form not found", 404));
+    return next(new ErrorHandler("Admission not found", 404));
   }
 
   res.status(200).json({
     result: 1,
-    message: "Admission form fetched successfully",
+    message: "Admission fetched successfully",
     admission,
   });
 });
@@ -90,18 +154,50 @@ export const getAdmissionById = catchAsyncError(async (req, res, next) => {
 export const deleteAdmission = catchAsyncError(async (req, res, next) => {
   const { id } = req.params;
 
+  // Find the admission record first
   const admission = await Admission.findById(id);
-
   if (!admission) {
-    return next(new ErrorHandler("Admission form not found", 404));
+    return next(new ErrorHandler("Admission not found", 404));
   }
 
-  await admission.deleteOne();
+  try {
+    // Delete profile photo from Cloudinary if it exists
+    if (admission.photo) {
+      const publicId = admission.photo
+        .split("/")
+        .slice(-2)
+        .join("/")
+        .split(".")[0];
+      await cloudinary.uploader.destroy(
+        `thenad_data/admissions/profile_photos/${publicId}`
+      );
+    }
 
-  res.status(200).json({
-    result: 1,
-    message: "Admission form deleted successfully",
-  });
+    // Delete all documents from Cloudinary if they exist
+    if (admission.document && admission.document.length > 0) {
+      const deletePromises = admission.document.map((docUrl) => {
+        const publicId = docUrl.split("/").slice(-2).join("/").split(".")[0];
+        return cloudinary.uploader.destroy(
+          `thenad_data/admissions/documents/${publicId}`,
+          {
+            resource_type: "raw",
+          }
+        );
+      });
+      await Promise.all(deletePromises);
+    }
+
+    // Delete the admission record from database
+    await Admission.findByIdAndDelete(id);
+
+    res.status(200).json({
+      result: 1,
+      message: "Admission deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting admission:", error);
+    return next(new ErrorHandler("Failed to delete admission", 500));
+  }
 });
 
 // ADDMISSION APPROVED
@@ -112,7 +208,7 @@ export const approveAdmission = catchAsyncError(async (req, res, next) => {
   const admission = await Admission.findById(id);
 
   if (!admission) {
-    throw new ErrorHandler("Admission form not found", 404);
+    throw new ErrorHandler("Admission not found", 404);
   }
 
   if (admission.approved) {
@@ -167,4 +263,155 @@ export const approveAdmission = catchAsyncError(async (req, res, next) => {
     console.error("Error sending email:", error);
     throw new ErrorHandler("Failed to send email", 500);
   }
+});
+
+///////////////////////////
+
+const deleteFromCloudinary = async (publicUrl) => {
+  try {
+    if (!publicUrl) return;
+
+    // Extract public_id from the URL
+    const publicId = publicUrl.split("/").pop().split(".")[0];
+    const folder = publicUrl.split("/").slice(-2, -1)[0]; // Extracts folder name
+
+    await cloudinary.uploader.destroy(`${folder}/${publicId}`, {
+      resource_type: publicUrl.includes(".pdf") ? "raw" : "image",
+    });
+  } catch (error) {
+    console.error("Failed to delete from Cloudinary:", error);
+    throw error;
+  }
+};
+
+export const updateAdmission = catchAsyncError(async (req, res, next) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  // Find the existing admission record
+  const existingAdmission = await Admission.findById(id);
+  if (!existingAdmission) {
+    return next(new ErrorHandler("Admission record not found", 404));
+  }
+
+  let newImageUrl = existingAdmission.photo;
+  let newDocumentUrls = existingAdmission.document;
+
+  // Handle profile photo update (if new photo is provided)
+  if (req.files?.photo?.[0]) {
+    try {
+      const profilePhoto = req.files.photo[0];
+
+      // Validate image type and size
+      const allowedImageTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "image/webp",
+      ];
+      if (!allowedImageTypes.includes(profilePhoto.mimetype)) {
+        return next(
+          new ErrorHandler(
+            "Only JPEG/PNG/JPG/WEBP images are allowed for profile photo",
+            400
+          )
+        );
+      }
+      if (profilePhoto.size > 5 * 1024 * 1024) {
+        return next(
+          new ErrorHandler("Profile photo must be less than 5MB", 400)
+        );
+      }
+
+      // Upload new photo
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "thenad_data/admissions/profile_photos",
+            transformation: [
+              { width: 300, height: 300, crop: "fill", quality: "auto" },
+            ],
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        streamifier.createReadStream(profilePhoto.buffer).pipe(stream);
+      });
+
+      newImageUrl = result.secure_url;
+
+      // Delete old photo from Cloudinary
+      if (existingAdmission.photo) {
+        await deleteFromCloudinary(existingAdmission.photo);
+      }
+    } catch (error) {
+      console.error("Profile photo update error:", error);
+      return next(new ErrorHandler("Failed to update profile photo", 500));
+    }
+  }
+
+  // Handle document updates (if new documents are provided)
+  if (req.files?.document?.length > 0) {
+    try {
+      // Validate new documents
+      for (const file of req.files.document) {
+        if (file.mimetype !== "application/pdf") {
+          return next(new ErrorHandler("Documents must be PDF files", 400));
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          return next(
+            new ErrorHandler("Each document must be less than 10MB", 400)
+          );
+        }
+      }
+
+      // Upload new documents
+      const uploadPromises = req.files.document.map((file) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "thenad_data/admissions/documents",
+              resource_type: "auto",
+              type: "upload",
+              access_mode: "public",
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result.secure_url);
+            }
+          );
+          streamifier.createReadStream(file.buffer).pipe(stream);
+        });
+      });
+
+      newDocumentUrls = await Promise.all(uploadPromises);
+
+      // Delete old documents from Cloudinary
+      if (existingAdmission.document?.length > 0) {
+        await Promise.all(existingAdmission.document.map(deleteFromCloudinary));
+      }
+    } catch (error) {
+      console.error("Document update error:", error);
+      return next(new ErrorHandler("Failed to update documents", 500));
+    }
+  }
+
+  // Update the admission record
+  const updatedAdmission = await Admission.findByIdAndUpdate(
+    id,
+    {
+      ...updates,
+      photo: newImageUrl,
+      document: newDocumentUrls,
+    },
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Admission updated successfully",
+    admission: updatedAdmission,
+  });
 });
