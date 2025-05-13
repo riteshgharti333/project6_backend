@@ -1,21 +1,41 @@
- import { createCanvas, loadImage, registerFont } from "canvas";
+import { createCanvas, loadImage, registerFont } from "canvas";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url"; // Import this
 import Marksheet from "../models/marksheetModel.js";
 import ErrorHandler from "../utils/errorHandler.js";
 
-const fontPath = path.resolve(
+// Get current directory for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Assuming 'marksheetFonts' is at the project root,
+// and this file is 'src/controllers/marksheetController.js' (example)
+// you might need to go up a few directories.
+// Adjust '..' based on your actual file structure.
+// If 'marksheetFonts' is in the same directory as this file's parent's parent:
+const fontPath = path.join(
+  __dirname, // current directory (e.g., /app/src/controllers)
+  "..",       // up to /app/src
+  "..",       // up to /app (project root)
   "marksheetFonts",
   "fonts",
   "fonnts.com-garet-medium.otf"
 );
 
-registerFont(fontPath, {
-  family: "Garet-Heavy",
-  weight: "normal",
-  style: "normal",
-});
-
+// Add a check to see if the font file is found at runtime
+if (!fs.existsSync(fontPath)) {
+  console.error(`FATAL: Font file not found at ${fontPath}. Current __dirname: ${__dirname}`);
+  // You might want to throw an error here or have a fallback mechanism
+  // For now, this log will be crucial for debugging on the server.
+} else {
+  console.log(`Registering font from: ${fontPath}`);
+  registerFont(fontPath, {
+    family: "Garet-Heavy", // This is the name you'll use in ctx.font
+    weight: "normal",
+    style: "normal",
+  });
+}
 export const printMarksheet = async (id) => {
   try {
     const marksheet = await Marksheet.findById(id).populate("student");
