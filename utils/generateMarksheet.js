@@ -4,11 +4,7 @@ import path from "path";
 import Marksheet from "../models/marksheetModel.js";
 import ErrorHandler from "../utils/errorHandler.js";
 
-const fontPath = path.resolve(
-  "marksheetFonts",
-  "fonts",
-  "fonnts.com-garet-heavy.otf"
-);
+const fontPath = path.resolve("fonts", "Garet-Heavy.ttf");
 
 registerFont(fontPath, {
   family: "Garet-Heavy",
