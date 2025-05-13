@@ -56,8 +56,8 @@ export const generateCertificate = async (enrollmentId) => {
     };
 
     // ✅ Draw text with letter spacing
-    drawTextWithSpacing(`${student.certificateNo}`, 125, 310, 6);
-    drawTextWithSpacing(`${student.enrollmentId}`, 755, 305, 6);
+    drawTextWithSpacing(`${student.certificateNo}`, 100, 210, 6);
+    drawTextWithSpacing(`${student.enrollmentId}`, 990, 210, 6);
 
     const drawTextWithSpacingCentered = (text, y, spacing) => {
       let totalWidth = 0;
@@ -66,21 +66,21 @@ export const generateCertificate = async (enrollmentId) => {
       }
       totalWidth -= spacing;
 
-      const centerX = canvas.width / 2;
+      const centerX = canvas.width / 2 - 20;
       const startX = centerX - totalWidth / 2;
 
       // Draw each character
-      let currentX = startX;
+      let currentX = startX; 
       for (const char of text) {
         ctx.fillText(char, currentX, y);
         currentX += ctx.measureText(char).width + spacing;
       }
     };
 
-    drawTextWithSpacingCentered(`${student.name}`, 760, 6);
-    drawTextWithSpacingCentered(`${student.course}`, 910, 6);
-    drawTextWithSpacingCentered(`${student.duration} Year`, 1065, 6);
-    drawTextWithSpacingCentered(formattedDate, 1180, 6);
+    drawTextWithSpacingCentered(`${student.name}`, 450, 6);
+    drawTextWithSpacingCentered(`${student.course}`, 540, 6);
+    drawTextWithSpacingCentered(`${student.duration} Year`, 635, 6);
+    drawTextWithSpacingCentered(formattedDate, 710, 6);
 
     // ✅ Save the generated certificate
     const buffer = canvas.toBuffer("image/png");
