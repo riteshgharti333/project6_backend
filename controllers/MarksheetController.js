@@ -109,6 +109,8 @@ export const updateMarksheet = catchAsyncError(async (req, res, next) => {
 
 // DELETE MARKSHEET
 export const deleteMarksheet = catchAsyncError(async (req, res, next) => {
+  console.log("hello")
+
   const { id } = req.params;
 
   const marksheet = await Marksheet.findById(id);

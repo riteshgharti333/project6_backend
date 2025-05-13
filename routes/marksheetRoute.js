@@ -22,6 +22,6 @@ router.get("/:id", getSingleMarksheet);
 router.put("/:id", updateMarksheet);
 
 // DELETE
-router.delete("/delete/:id", deleteMarksheet);
+router.delete("/:id", deleteMarksheet);
 
 export default router;
