@@ -7,7 +7,7 @@ import ErrorHandler from "../utils/errorHandler.js";
 const fontPath = path.resolve(
   "marksheetFonts",
   "fonts",
-  "fonnts.com-garet-light.otf"
+  "fonnts.com-garet-medium.otf"
 );
 
 registerFont(fontPath, {
