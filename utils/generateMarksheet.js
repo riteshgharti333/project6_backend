@@ -12,7 +12,7 @@ const fontPath = path.resolve(
 
 registerFont(fontPath, {
   family: "Garet-Heavy",
-  weight: "300",
+  weight: "normal",
   style: "normal",
 });
 
@@ -42,7 +42,7 @@ export const printMarksheet = async (id) => {
     }/${date.getFullYear()}`;
 
     ctx.fillStyle = "#000";
-    ctx.font = "22px 'Garet-Heavy'";
+    ctx.font = "normal 22px 'Garet-Heavy'";
 
     // ✅ Function to add letter spacing
     const drawTextWithSpacing = (text, x, y, spacing) => {
