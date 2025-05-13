@@ -4,13 +4,21 @@ import ErrorHandler from "../utils/errorHandler.js";
 
 // Create a Student
 export const createStudent = catchAsyncError(async (req, res, next) => {
-  const { certificateNo, enrollmentId, name, course, duration, date } =
-    req.body;
+  const {
+    certificateNo,
+    enrollmentId,
+    name,
+    fatherName,
+    course,
+    duration,
+    date,
+  } = req.body;
 
   if (
     !certificateNo ||
     !enrollmentId ||
     !name ||
+    !fatherName ||
     !course ||
     !duration ||
     !date
@@ -23,6 +31,7 @@ export const createStudent = catchAsyncError(async (req, res, next) => {
       certificateNo,
       enrollmentId,
       name,
+      fatherName,
       course,
       duration,
       date,
@@ -37,7 +46,7 @@ export const createStudent = catchAsyncError(async (req, res, next) => {
     if (error.code === 11000) {
       throw new ErrorHandler(
         `Student with enrollment ID "${enrollmentId}" already exists!`,
-        409,
+        409
       );
     }
 
@@ -80,7 +89,7 @@ export const updateStudent = catchAsyncError(async (req, res, next) => {
   const updatedStudent = await Student.findByIdAndUpdate(
     req.params.id,
     req.body,
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   );
 
   res.status(200).json({
@@ -105,3 +114,33 @@ export const deleteStudent = catchAsyncError(async (req, res, next) => {
     message: "Student deleted successfully",
   });
 });
+
+//////////// Search Student
+
+export const searchStudents = catchAsyncError(async (req, res, next) => {
+  const { keyword } = req.query;
+
+  if (!keyword || keyword.trim() === "") {
+    return res.status(200).json({ result: 1, students: [] });
+  }
+
+  const regex = new RegExp(keyword, "i"); 
+
+  const students = await Student.find({
+    $or: [{ name: regex }, { fatherName: regex }],
+  });
+
+  
+  if (students.length === 0) {
+    return res.status(404).json({
+      result: 0,
+      message: "No students found with that name",
+    });
+  }
+
+  res.status(200).json({
+    result: 1,
+    students,
+  });
+});
+

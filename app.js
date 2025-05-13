@@ -20,10 +20,14 @@ import founderRouter from "./routes/founderRoute.js";
 import imageRouter from "./routes/imageRoute.js";
 import studentRouter from "./routes/studentRoute.js";
 import certificateRouter from "./routes/certificateRoute.js";
+import printRouter from "./routes/printRoute.js";
+
 
 import galleryFolderRouter from "./routes/galleryFolderRoute.js";
 import alumniRouter from "./routes/alumniRoute.js";
 import courseRouter from "./routes/courseRoute.js";
+import examRouter from "./routes/examRoute.js";
+import marksheetRouter from "./routes/marksheetRoute.js";
 
 
 // Initialize Express app
@@ -58,7 +62,7 @@ app.use(
     },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-  }),
+  })
 );
 
 app.use(cookieParser());
@@ -78,9 +82,13 @@ app.use("/backend/api/upload", imageRouter);
 
 app.use("/backend/api/student", studentRouter);
 app.use("/backend/api/certificate", certificateRouter);
+app.use("/backend/api/print-marksheet", printRouter);
+
 app.use("/backend/api/gallery-folder", galleryFolderRouter);
 app.use("/backend/api/alumni", alumniRouter);
 app.use("/backend/api/course", courseRouter);
+app.use("/backend/api/exam", examRouter);
+app.use("/backend/api/marksheet", marksheetRouter);
 
 
 app.get("/", (req, res) => {

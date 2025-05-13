@@ -4,7 +4,11 @@ import path from "path";
 import Student from "../models/studentModel.js";
 import ErrorHandler from "../utils/errorHandler.js";
 
-const fontPath = path.resolve("fonts", "static", "DMSans_18pt-LightItalic.ttf");
+const fontPath = path.resolve(
+  "fonts",
+  "static",
+  "DMSans_18pt-SemiBoldItalic.ttf"
+);
 
 registerFont(fontPath, { family: "DMSans", weight: "300", style: "italic" });
 
@@ -15,7 +19,7 @@ export const generateCertificate = async (enrollmentId) => {
     if (!student) {
       throw new ErrorHandler(
         `No student found with enrollment ID: ${enrollmentId}`,
-        404,
+        404
       );
     }
 
@@ -23,7 +27,7 @@ export const generateCertificate = async (enrollmentId) => {
     const templatePath = path.join("templates", "template.jpeg");
     const outputPath = path.join(
       "certificates",
-      `${student.enrollmentId}.jpeg`,
+      `${student.enrollmentId}.jpeg`
     );
 
     const image = await loadImage(templatePath);
@@ -35,7 +39,9 @@ export const generateCertificate = async (enrollmentId) => {
 
     // ✅ Format date to DD/MM/YYYY
     const date = new Date(student.date);
-    const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    const formattedDate = `${date.getDate()}/${
+      date.getMonth() + 1
+    }/${date.getFullYear()}`;
 
     ctx.fillStyle = "#000";
     ctx.font = "italic 22px DMSans";
@@ -50,12 +56,31 @@ export const generateCertificate = async (enrollmentId) => {
     };
 
     // ✅ Draw text with letter spacing
-    drawTextWithSpacing(`${student.enrollmentId}`, 1000, 210, 6); // 5px letter spacing
-    drawTextWithSpacing(`${student.name}`, 580, 450, 6); // 4px letter spacing
-    drawTextWithSpacing(`${student.course}`, 490, 540, 6);
-    drawTextWithSpacing(`${student.duration} Year`, 580, 635, 6);
-    drawTextWithSpacing(formattedDate, 560, 710, 6);
-    drawTextWithSpacing(`${student.certificateNo}`, 100, 210, 6);
+    drawTextWithSpacing(`${student.certificateNo}`, 125, 310, 6);
+    drawTextWithSpacing(`${student.enrollmentId}`, 755, 305, 6);
+
+    const drawTextWithSpacingCentered = (text, y, spacing) => {
+      let totalWidth = 0;
+      for (const char of text) {
+        totalWidth += ctx.measureText(char).width + spacing;
+      }
+      totalWidth -= spacing;
+
+      const centerX = canvas.width / 2;
+      const startX = centerX - totalWidth / 2;
+
+      // Draw each character
+      let currentX = startX;
+      for (const char of text) {
+        ctx.fillText(char, currentX, y);
+        currentX += ctx.measureText(char).width + spacing;
+      }
+    };
+
+    drawTextWithSpacingCentered(`${student.name}`, 760, 6);
+    drawTextWithSpacingCentered(`${student.course}`, 910, 6);
+    drawTextWithSpacingCentered(`${student.duration} Year`, 1065, 6);
+    drawTextWithSpacingCentered(formattedDate, 1180, 6);
 
     // ✅ Save the generated certificate
     const buffer = canvas.toBuffer("image/png");
